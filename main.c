@@ -52,7 +52,7 @@ int main()
 
     while(token != NULL)
     {
-        printf("%s  \n", token);
+        printf("%s ", token);
 
         token = strtok(NULL, "()");
     }
