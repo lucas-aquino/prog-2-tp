@@ -1,0 +1,3 @@
+inicio(50, 60)
+arriba(50)
+abajo(70)
