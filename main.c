@@ -3,6 +3,7 @@
 #include <string.h>
 #include <conio.h>
 #include <ctype.h>
+#include <time.h>
 
 #include <io.h>
 #include <fcntl.h>
@@ -15,6 +16,10 @@
 int main()
 {
     int x, y;
+    int frame;
+    short key;
+
+    clock_t start;
 
     //Las constantes SS_COL, SS_ROW estan definidas en "funciones.h"
     char display[SS_COL][SS_ROW];
@@ -27,39 +32,33 @@ int main()
         }
     }
 
-    //refreshDisplay(display);
 
-    int fHandler;
-    int fSize;
-    char *buffer;
-    int firstParentesis;
+    frame = 0;
 
-    getFHandler(&fHandler, "algo.txt");
-
-    fSize = lseek(fHandler, 0, SEEK_END);
-
-    buffer = (char *)malloc(fSize);
-
-    lseek(fHandler, 0, SEEK_SET);
-
-    read(fHandler, buffer, fSize);
-
-    buffer[fSize] = '\0';
-
-    char *token;
-
-    token = strtok(buffer, "()");
-
-    while(token != NULL)
+    while(1)
     {
-        printf("%s ", token);
+        start = clock();
 
-        token = strtok(NULL, "()");
+        if(kbhit())
+        {
+            key = getch();
+
+            if(key == 0 || key == 224)
+                key = getch() + 1000;
+
+            if(key == 27)
+                break;
+        }
+
+
+        printf("%3d\r", frame);
+
+        frame++;
+
+
+        while((clock() - start) <= T_REFRESH);
+        system("cls");
     }
-
-    close(fHandler);
-
-    //short key;
 
     return 0;
 }

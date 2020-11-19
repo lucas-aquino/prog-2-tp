@@ -8,9 +8,11 @@
 #define CH_OBJ          178 //Caracter del objeto
 #define CH_OBJ_DR       219 //Direccion del objeto
 
-/* Tamanno de la pantalla */
+/* Pantalla */
 #define SS_COL           60
 #define SS_ROW           21
+
+#define T_REFRESH       100 // Tiempo de espera para el programa
 
 /* teclas de comandos */
 #define KB_INCIO       1065 //[F5]  Setear la posicion de inicio

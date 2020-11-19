@@ -29,7 +29,7 @@ void refreshDisplay(char display[SS_COL][SS_ROW])
 
 void displayMenu()
 {
-
+    puts("Hola");
 }
 
 int getFHandler(int *fHandler, char *fPath)
