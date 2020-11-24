@@ -13,24 +13,74 @@
 
 /** FUNCIONES ********/
 
-void refreshDisplay(char display[SS_COL][SS_ROW])
-{
-    int x, y;
 
-    for(y = 0; y < SS_ROW; y++)
+
+
+//DISPLAY
+void refreshDisplay(char display[SS_ROW][SS_COL])
+{
+    int y = 0;
+    while(y < SS_ROW)
     {
-        for(x = 0; x < SS_COL; x++)
-        {
-            printf("%c", display[x][y]);
-        }
-        printf("\n");
+        puts(display[y]);
+        y++;
     }
 }
 
+void clearDisplay(char display[SS_ROW][SS_COL])
+{
+    int y = 0;
+
+    while(y < SS_ROW)
+    {
+        memset(display[y], CH_BGD, SS_COL);
+        display[y][SS_COL - 1] = '\0';
+        y++;
+    }
+}
+
+void ubicarPlayer(_Objeto *player, char display[SS_ROW][SS_COL])
+{
+    char i;
+    i = -2;
+
+    memset(&display[player->pos.y - 1][player->pos.x + i], CH_OBJ, sizeof(char) * 5);
+    memset(&display[player->pos.y][player->pos.x + i],     CH_OBJ, sizeof(char) * 5);
+    memset(&display[player->pos.y + 1][player->pos.x + i], CH_OBJ, sizeof(char) * 5);
+
+    if(abs(player->dir) > 1)
+    {
+        memset(&display[player->pos.y - 1][player->pos.x + player->dir], CH_OBJ_DR, sizeof(char));
+        memset(&display[player->pos.y][player->pos.x + player->dir],     CH_OBJ_DR, sizeof(char));
+        memset(&display[player->pos.y + 1][player->pos.x + player->dir], CH_OBJ_DR, sizeof(char));
+    }else
+    {
+        memset(&display[player->pos.y + player->dir][player->pos.x + i], CH_OBJ_DR, sizeof(char) * 5);
+    }
+}
+
+
 void displayMenu()
 {
-    puts("Hola");
+    puts(
+  "\n   PROGRAMACION II : TP Final - Lucas Aquino  2020\n\n"
+    "   Controles:\n\n"
+    "          [F1]  Seleccione un archivo.\n"
+    "          [F2]  Detener el jugador.\n"
+    "          [F3]  Reemplazar comandos por un archivo.\n"
+    "          [F4]  Pausar o Reanudar.\n"
+    "          [F5]  Definir la posicion de inicio.\n\n"
+    "   Agregar directamente comandos a la lista de comandos:\n\n"
+    "      [ARRIBA]  Indicar los pasos hacia ARRIBA.\n"
+    "     [DERECHA]  Indicar los pasos hacia la DERECHA.\n"
+    "       [ABAJO]  Indicar los pasos hacia ABAJO.\n"
+    "   [IZQUIERDA]  Indicar los pasos hacia la IZQUIERDA.\n\n"
+    );
 }
+
+
+
+//Manejo de Archivos
 
 int getFHandler(int *fHandler, char *fPath)
 {
@@ -39,9 +89,15 @@ int getFHandler(int *fHandler, char *fPath)
     if(*fHandler == -1)
         if(errno == ENOENT)
             return 0;
-
+        else
+            return -1;
 
     return 1;
+}
+
+int archivoCargarComandos(int *fHandler, _Proceso *cmdList)
+{
+ return 0;
 }
 
 /*********************/
