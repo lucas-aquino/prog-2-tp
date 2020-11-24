@@ -81,6 +81,7 @@ void clearDisplay(char display[SS_ROW][SS_COL]);
 void refreshDisplay(char display[SS_ROW][SS_COL]);
 void displayMenu();
 void ubicarPlayer(_Objeto *player, char display[SS_ROW][SS_COL]);
+void desplazarPlayer(_Objeto *player, _Proceso *cdmList, int *punteroProceso, int *contadorProceso, int *cantidadProcesos);
 
 //Manejo de Archivos
 int getFHandler(int *fHandler, char *fPath);

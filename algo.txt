@@ -1,3 +1,5 @@
-inicio(50, 60)
-arriba(50)
-abajo(70)
+inicio(2,10)
+arriba(5)
+abajo(7)
+izquierda(2)
+derecha(6)

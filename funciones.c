@@ -39,6 +39,7 @@ void clearDisplay(char display[SS_ROW][SS_COL])
     }
 }
 
+//Jugador
 void ubicarPlayer(_Objeto *player, char display[SS_ROW][SS_COL])
 {
     char i;
@@ -59,6 +60,49 @@ void ubicarPlayer(_Objeto *player, char display[SS_ROW][SS_COL])
     }
 }
 
+void desplazarPlayer(_Objeto *player, _Proceso *cmdList, int *punteroProceso, int *contadorProceso, int *cantidadProcesos)
+{
+    if(*cantidadProcesos > 0 && cmdList[*punteroProceso].estado == HACIENDO)
+    {
+        if(abs(cmdList[*punteroProceso].cmd) > 1)
+        {
+            player->dir = cmdList[*punteroProceso].cmd;
+
+            if(cmdList[*punteroProceso].cmd == DERECHA && player->pos.x < SS_COL - 2)
+                player->pos.x += 1;
+            else if(cmdList[*punteroProceso].cmd == IZQUIERDA && player->pos.x > 2 )
+                player->pos.x -= 1;
+            else
+                cmdList[*punteroProceso].estado = ERROR;
+        }else
+        {
+            if(player->pos.y >= 1 && player->pos.x <= SS_ROW - 2)
+            {
+                player->pos.y += cmdList[*punteroProceso].cmd;
+                player->dir = cmdList[*punteroProceso].cmd;
+            }else
+                cmdList[*punteroProceso].estado = ERROR;
+        }
+        (*contadorProceso)++;
+
+        if(*contadorProceso >= cmdList[*punteroProceso].value && cmdList[*punteroProceso].estado != ERROR)
+        {
+            cmdList[*punteroProceso].estado = HECHO;
+            (*punteroProceso)++;
+            cmdList[*punteroProceso].estado = HACIENDO;
+            *contadorProceso = 0;
+            (*cantidadProcesos)--;
+        }
+
+        if(cmdList[*punteroProceso].estado == ERROR)
+        {
+            (*punteroProceso)++;
+            cmdList[*punteroProceso].estado = HACIENDO;
+            *contadorProceso = 0;
+            (*cantidadProcesos)--;
+        }
+    }
+}
 
 void displayMenu()
 {
@@ -87,10 +131,12 @@ int getFHandler(int *fHandler, char *fPath)
     *fHandler = open(fPath, O_RDONLY | O_BINARY);
 
     if(*fHandler == -1)
+    {
         if(errno == ENOENT)
             return 0;
-        else
-            return -1;
+
+        return -1;
+    }
 
     return 1;
 }

@@ -15,8 +15,11 @@
 /** MAIN *************/
 int main()
 {
-    int frame;
+    clock_t start;
+    clock_t end;
+
     short key;
+    int frame = 0;
 
     float sumaPromRender = 0;
     float promedioRender = 0;
@@ -25,8 +28,12 @@ int main()
     int punteroProc  = 0;
     int contadorProc = 0;
 
-    clock_t start;
-    clock_t end;
+    int fHandler;
+    int fSize;
+    char *fPath = "algo.txt";
+    char *buffer;
+
+    char *token;
 
     _Objeto player;
 
@@ -36,27 +43,27 @@ int main()
 
     strcpy(cmdList[0].nombre, "ABA");
     cmdList[0].estado = PORHACER;
-    cmdList[0].value  = 7;
+    cmdList[0].value  = 9;
     cmdList[0].cmd    = ABAJO;
 
     strcpy(cmdList[1].nombre, "IZQ");
     cmdList[1].estado = PORHACER;
-    cmdList[1].value  = 7;
+    cmdList[1].value  = 20;
     cmdList[1].cmd    = IZQUIERDA;
 
     strcpy(cmdList[2].nombre, "ARR");
     cmdList[2].estado = PORHACER;
-    cmdList[2].value  = 7;
+    cmdList[2].value  = 9;
     cmdList[2].cmd    = ARRIBA;
 
     strcpy(cmdList[3].nombre, "DER");
     cmdList[3].estado = PORHACER;
-    cmdList[3].value  = 7;
+    cmdList[3].value  = 8;
     cmdList[3].cmd    = DERECHA;
 
     strcpy(cmdList[4].nombre, "ABA");
     cmdList[4].estado = PORHACER;
-    cmdList[4].value  = 7;
+    cmdList[4].value  = 6;
     cmdList[4].cmd    = ABAJO;
 
 
@@ -69,8 +76,6 @@ int main()
     char display[SS_ROW][SS_COL];
 
     clearDisplay(display);
-
-    frame = 0;
 
     while(1)
     {
@@ -88,56 +93,57 @@ int main()
             if(key == 27)
                 break;
 
-
-            char cmd[16];
-            int x,y;
-
             switch(key)
             {
             case KB_INCIO:
-                gets(cmd);
+                /*gets(cmd);
 
                 player.dir = ARRIBA;
 
                 player.pos.y = y;
-                player.pos.x = x;
-
+                player.pos.x = x;*/
+                cmdList[punteroProc].estado = HACIENDO;
+                break;
+            case KB_PAUSA:
+                if(cmdList[punteroProc].estado == HACIENDO)
+                {
+                    cmdList[punteroProc].estado = PAUSADO;
+                    break;
+                }
+                cmdList[punteroProc].estado = HACIENDO;
                 break;
             }
         }
-
         system("cls");
 
 
-        if(cantidadProc > 0 && cmdList[punteroProc].estado == HACIENDO)
-        {
-
-            if(abs(cmdList[punteroProc].cmd) > 1)
-            {
-                player.dir = cmdList[punteroProc].cmd;
-                player.pos.x += cmdList[punteroProc].cmd;
-            }else
-            {
-                player.dir = cmdList[punteroProc].cmd;
-                player.pos.y += cmdList[punteroProc].cmd;
-            }
-            contadorProc++;
-
-            if(contadorProc >= cmdList[punteroProc].value )
-            {
-                cmdList[punteroProc].estado = HECHO;
-                punteroProc++;
-                cmdList[punteroProc].estado = HACIENDO;
-                contadorProc = 0;
-                cantidadProc--;
-            }
-        }
-
-
+        desplazarPlayer(&player, cmdList, &punteroProc, &contadorProc, &cantidadProc);
         ubicarPlayer(&player, display);
 
         displayMenu();
         refreshDisplay(display);
+
+        /*
+        getFHandler(&fHandler, fPath);
+
+        fSize = lseek(fHandler, 0, SEEK_END);
+
+        buffer = (char *)malloc(fSize);
+
+        lseek(fHandler, 0, SEEK_SET);
+
+        read(fHandler, buffer, sizeof(char) * fSize);
+
+        printf("%d", fSize);
+
+        token = strtok(buffer, "%[^\n]");
+
+
+        while( token != NULL ) {
+            printf( " %s\n", token );
+
+            token = strtok(NULL, "%[^\n]");
+        }*/
 
         printf("PLAYER POS: x%2d y%2d DIR:%2d\n", player.pos.x, player.pos.y, player.dir);
         puts("CMD\tESTADO\tVALUE");
@@ -152,16 +158,16 @@ int main()
         frame++;
 
         end = clock() - end;
+        printf("Render: %3d ms\n", end);
+
         sumaPromRender += end;
         promedioRender = sumaPromRender / (float) frame;
-        printf("Render: %3d ms\n", end);
         printf("Promedio: %3.1f ms\n", promedioRender);
 
         while((clock() - start) <= T_REFRESH);
-
-
     }
 
+    close(fHandler);
     return 0;
 }
 /*********************/
