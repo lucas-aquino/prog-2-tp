@@ -66,25 +66,28 @@ void desplazarPlayer(_Objeto *player, _Proceso *cmdList, int *punteroProceso, in
 {
     if(*cantidadProcesos > 0 && cmdList[*punteroProceso].estado == HACIENDO)
     {
-        if(abs(cmdList[*punteroProceso].cmd) > 1)
+        player->dir = cmdList[*punteroProceso].cmd;
+        if(cmdList[*punteroProceso].value > 0)
         {
-            player->dir = cmdList[*punteroProceso].cmd;
-
-            if(cmdList[*punteroProceso].cmd == DERECHA && player->pos.x < SS_COL - 2)
-                player->pos.x += 1;
-            else if(cmdList[*punteroProceso].cmd == IZQUIERDA && player->pos.x > 2 )
-                player->pos.x -= 1;
-            else
-                cmdList[*punteroProceso].estado = ERROR;
-        }else
-        {
-            if(player->pos.y >= 1 && player->pos.x <= SS_ROW - 2)
+            if(abs(cmdList[*punteroProceso].cmd) > 1)
             {
-                player->pos.y += cmdList[*punteroProceso].cmd;
-                player->dir = cmdList[*punteroProceso].cmd;
+
+                if(cmdList[*punteroProceso].cmd == DERECHA && player->pos.x < SS_COL - 2)
+                    player->pos.x += 1;
+                else if(cmdList[*punteroProceso].cmd == IZQUIERDA && player->pos.x > 2 )
+                    player->pos.x -= 1;
+                else
+                    cmdList[*punteroProceso].estado = ERROR;
             }else
-                cmdList[*punteroProceso].estado = ERROR;
+            {
+                if(player->pos.y >= 2 && player->pos.x <= SS_ROW - 2)
+                {
+                    player->pos.y += cmdList[*punteroProceso].cmd;
+                }else
+                    cmdList[*punteroProceso].estado = ERROR;
+            }
         }
+
         (*contadorProceso)++;
 
         if(*contadorProceso >= cmdList[*punteroProceso].value && cmdList[*punteroProceso].estado != ERROR)

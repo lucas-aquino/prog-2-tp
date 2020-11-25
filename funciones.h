@@ -12,7 +12,7 @@
 #define SS_COL           61
 #define SS_ROW           21
 
-#define T_REFRESH      1000 // Tiempo de espera para el programa
+#define T_REFRESH       100 // Tiempo de espera para el programa
 
 /* teclas de comandos */
 #define KB_ARCH_F      1059 //[F1]  Limpia la lista de procesos y ejecuta el archivo hasta el final
