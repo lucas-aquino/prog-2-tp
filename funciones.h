@@ -26,6 +26,8 @@
 #define KB_ABAJO       1080 //[ABJ] Ejecutar el comando hacia abajo
 #define KB_IZQUIERDA   1075 //[IZQ] Ejecutar el comando hacia la izquierda
 
+#define CMD_APPEND        0 // No se sobreescribe la lista de comando
+#define CMD_OVERRIDE      1 // Se sobreescribe la lista de comandos
 
 /*********************/
 
@@ -81,13 +83,15 @@ void clearDisplay(char display[SS_ROW][SS_COL]);
 void refreshDisplay(char display[SS_ROW][SS_COL]);
 void displayMenu();
 void ubicarPlayer(_Objeto *player, char display[SS_ROW][SS_COL]);
-void desplazarPlayer(_Objeto *player, _Proceso *cdmList, int *punteroProceso, int *contadorProceso, int *cantidadProcesos);
+void desplazarPlayer(_Objeto *player, _Proceso *cmdList, int *punteroProceso, int *contadorProceso, int *cantidadProcesos);
 
 //Manejo de Archivos
 int getFHandler(int *fHandler, char *fPath);
 
 //Comandos
-int archivoCargarComandos(int *fHandler, _Proceso *cmdList);
+int cargarComandosArchivo(int *fHandler, _Proceso *cmdList);
+
+int agregarComandoLista(_Proceso *cmdList, _Proceso *cmdAgregar, int *cantidadProcesos, int modeList);
 
 /*********************/
 

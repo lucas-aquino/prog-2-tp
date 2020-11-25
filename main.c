@@ -27,13 +27,13 @@ int main()
     int cantidadProc = 5;
     int punteroProc  = 0;
     int contadorProc = 0;
-
+    /*
     int fHandler;
     int fSize;
     char *fPath = "algo.txt";
     char *buffer;
 
-    char *token;
+    char *token;*/
 
     _Objeto player;
 
@@ -66,7 +66,13 @@ int main()
     cmdList[4].value  = 6;
     cmdList[4].cmd    = ABAJO;
 
+    _Proceso nuevoProceso;
 
+    strcpy(nuevoProceso.nombre, "ARR");
+    nuevoProceso.value = 5;
+    nuevoProceso.cmd = ARRIBA;
+
+    agregarComandoLista(cmdList, &nuevoProceso, &cantidadProc, CMD_APPEND);
 
     player.pos.x = 11;
     player.pos.y = 5;
@@ -148,7 +154,7 @@ int main()
         printf("PLAYER POS: x%2d y%2d DIR:%2d\n", player.pos.x, player.pos.y, player.dir);
         puts("CMD\tESTADO\tVALUE");
 
-        for(int i = 0; i < 5; i++)
+        for(int i = 0; i < 6; i++)
         {
             printf("%-3s\t%-6d\t%-5d\n", cmdList[i].nombre, cmdList[i].estado, cmdList[i].value);
         }
@@ -167,7 +173,8 @@ int main()
         while((clock() - start) <= T_REFRESH);
     }
 
-    close(fHandler);
+    free(cmdList);
+    //close(fHandler);
     return 0;
 }
 /*********************/

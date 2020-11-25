@@ -104,6 +104,9 @@ void desplazarPlayer(_Objeto *player, _Proceso *cmdList, int *punteroProceso, in
     }
 }
 
+
+
+//Menu
 void displayMenu()
 {
     puts(
@@ -125,7 +128,6 @@ void displayMenu()
 
 
 //Manejo de Archivos
-
 int getFHandler(int *fHandler, char *fPath)
 {
     *fHandler = open(fPath, O_RDONLY | O_BINARY);
@@ -141,9 +143,32 @@ int getFHandler(int *fHandler, char *fPath)
     return 1;
 }
 
-int archivoCargarComandos(int *fHandler, _Proceso *cmdList)
+int agregarComandoLista(_Proceso *cmdList, _Proceso *cmdAgregar, int *cantidadProcesos, int modeList)
 {
- return 0;
+    if(modeList == CMD_OVERRIDE)
+    {
+        free(cmdList);
+        *cantidadProcesos = 1;
+        cmdList = (_Proceso *)malloc(sizeof(_Proceso) * (*cantidadProcesos));
+    }
+
+    if(modeList == CMD_APPEND)
+    {
+        (*cantidadProcesos)++;
+        cmdList = (_Proceso *)realloc(cmdList, sizeof(_Proceso) * (*cantidadProcesos));
+    }
+
+
+    cmdAgregar->estado = PORHACER;
+
+    memcpy(&cmdList[(*cantidadProcesos) - 1], cmdAgregar, sizeof(_Proceso));
+
+    return -1;
+}
+
+int cargarComandosArchivo(int *fHandler, _Proceso *cmdList)
+{
+    return 0;
 }
 
 /*********************/
