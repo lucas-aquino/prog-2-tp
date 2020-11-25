@@ -43,27 +43,27 @@ int main()
 
     strcpy(cmdList[0].nombre, "ABA");
     cmdList[0].estado = PORHACER;
-    cmdList[0].value  = 9;
+    cmdList[0].value  = 0;
     cmdList[0].cmd    = ABAJO;
 
     strcpy(cmdList[1].nombre, "IZQ");
     cmdList[1].estado = PORHACER;
-    cmdList[1].value  = 20;
+    cmdList[1].value  = 0;
     cmdList[1].cmd    = IZQUIERDA;
 
     strcpy(cmdList[2].nombre, "ARR");
     cmdList[2].estado = PORHACER;
-    cmdList[2].value  = 9;
+    cmdList[2].value  = 0;
     cmdList[2].cmd    = ARRIBA;
 
     strcpy(cmdList[3].nombre, "DER");
     cmdList[3].estado = PORHACER;
-    cmdList[3].value  = 8;
+    cmdList[3].value  = 0;
     cmdList[3].cmd    = DERECHA;
 
     strcpy(cmdList[4].nombre, "ABA");
     cmdList[4].estado = PORHACER;
-    cmdList[4].value  = 6;
+    cmdList[4].value  = 0;
     cmdList[4].cmd    = ABAJO;
 
     _Proceso nuevoProceso;

@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1606260058 source:d:\both\documents\utn\tecnicatura en programacion\programacion ii\actividadfinal\funciones.c
+1606269083 source:d:\both\documents\utn\tecnicatura en programacion\programacion ii\actividadfinal\funciones.c
 	"funciones.h"
 	<stdio.h>
 	<stdlib.h>
@@ -11,9 +11,9 @@
 	<sys/stat.h>
 	<errno.h>
 
-1606258875 d:\both\documents\utn\tecnicatura en programacion\programacion ii\actividadfinal\funciones.h
+1606269120 d:\both\documents\utn\tecnicatura en programacion\programacion ii\actividadfinal\funciones.h
 
-1606260749 source:d:\both\documents\utn\tecnicatura en programacion\programacion ii\actividadfinal\main.c
+1606268941 source:d:\both\documents\utn\tecnicatura en programacion\programacion ii\actividadfinal\main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>

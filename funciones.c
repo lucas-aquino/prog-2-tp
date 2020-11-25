@@ -19,12 +19,14 @@
 //DISPLAY
 void refreshDisplay(char display[SS_ROW][SS_COL])
 {
-    int y = 0;
+    int y = 0;/*
     while(y < SS_ROW)
     {
         puts(display[y]);
         y++;
-    }
+    }*/
+
+    puts(display);
 }
 
 void clearDisplay(char display[SS_ROW][SS_COL])
@@ -34,7 +36,7 @@ void clearDisplay(char display[SS_ROW][SS_COL])
     while(y < SS_ROW)
     {
         memset(display[y], CH_BGD, SS_COL);
-        display[y][SS_COL - 1] = '\0';
+        display[y][SS_COL - 1] = '\n';
         y++;
     }
 }
