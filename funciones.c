@@ -17,39 +17,27 @@
 
 
 //DISPLAY
-void refreshDisplay(char display[SS_ROW][SS_COL])
-{
-    int y = 0;/*
-    while(y < SS_ROW)
-    {
-        puts(display[y]);
-        y++;
-    }*/
-
-    puts(display);
-}
-
-void clearDisplay(char display[SS_ROW][SS_COL])
+void fillDisplay(char display[SS_ROW][SS_COL])
 {
     int y = 0;
 
     while(y < SS_ROW)
     {
         memset(display[y], CH_BGD, SS_COL);
-        display[y][SS_COL - 1] = '\n';
+        memset(&display[y][SS_COL - 1], '\n', sizeof(char));
         y++;
     }
+    display[SS_ROW - 1][SS_COL - 1]  = '\0';
 }
 
 //Jugador
 void ubicarPlayer(_Objeto *player, char display[SS_ROW][SS_COL])
 {
-    char i;
-    i = -2;
+    memset(&display[player->pos.y - 1][player->pos.x - 2], CH_OBJ, sizeof(char) * 5);
+    memset(&display[player->pos.y][player->pos.x - 2],     CH_OBJ, sizeof(char) * 5);
+    memset(&display[player->pos.y + 1][player->pos.x - 2], CH_OBJ, sizeof(char) * 5);
 
-    memset(&display[player->pos.y - 1][player->pos.x + i], CH_OBJ, sizeof(char) * 5);
-    memset(&display[player->pos.y][player->pos.x + i],     CH_OBJ, sizeof(char) * 5);
-    memset(&display[player->pos.y + 1][player->pos.x + i], CH_OBJ, sizeof(char) * 5);
+    memset(&display[player->pos.y][player->pos.x], 254, sizeof(char));
 
     if(abs(player->dir) > 1)
     {
@@ -58,7 +46,7 @@ void ubicarPlayer(_Objeto *player, char display[SS_ROW][SS_COL])
         memset(&display[player->pos.y + 1][player->pos.x + player->dir], CH_OBJ_DR, sizeof(char));
     }else
     {
-        memset(&display[player->pos.y + player->dir][player->pos.x + i], CH_OBJ_DR, sizeof(char) * 5);
+        memset(&display[player->pos.y + player->dir][player->pos.x - 2], CH_OBJ_DR, sizeof(char) * 5);
     }
 }
 
@@ -80,26 +68,21 @@ void desplazarPlayer(_Objeto *player, _Proceso *cmdList, int *punteroProceso, in
                     cmdList[*punteroProceso].estado = ERROR;
             }else
             {
-                if(player->pos.y >= 2 && player->pos.x <= SS_ROW - 2)
+                if(player->pos.y >= 2 && player->pos.y <= SS_ROW - 3)
                 {
                     player->pos.y += cmdList[*punteroProceso].cmd;
                 }else
                     cmdList[*punteroProceso].estado = ERROR;
             }
+            (*contadorProceso)++;
         }
 
-        (*contadorProceso)++;
-
-        if(*contadorProceso >= cmdList[*punteroProceso].value && cmdList[*punteroProceso].estado != ERROR)
+        if(*contadorProceso == cmdList[*punteroProceso].value && cmdList[*punteroProceso].estado != ERROR)
         {
             cmdList[*punteroProceso].estado = HECHO;
-            (*punteroProceso)++;
-            cmdList[*punteroProceso].estado = HACIENDO;
-            *contadorProceso = 0;
-            (*cantidadProcesos)--;
         }
 
-        if(cmdList[*punteroProceso].estado == ERROR)
+        if(cmdList[*punteroProceso].estado == ERROR ||  cmdList[*punteroProceso].estado == HECHO)
         {
             (*punteroProceso)++;
             cmdList[*punteroProceso].estado = HACIENDO;
@@ -150,25 +133,10 @@ int getFHandler(int *fHandler, char *fPath)
 
 int agregarComandoLista(_Proceso *cmdList, _Proceso *cmdAgregar, int *cantidadProcesos, int modeList)
 {
-    if(modeList == CMD_OVERRIDE)
-    {
-        free(cmdList);
-        *cantidadProcesos = 1;
-        cmdList = (_Proceso *)malloc(sizeof(_Proceso) * (*cantidadProcesos));
-    }
-
-    if(modeList == CMD_APPEND)
-    {
-        (*cantidadProcesos)++;
-        cmdList = (_Proceso *)realloc(cmdList, sizeof(_Proceso) * (*cantidadProcesos));
-    }
 
 
-    cmdAgregar->estado = PORHACER;
 
-    memcpy(&cmdList[(*cantidadProcesos) - 1], cmdAgregar, sizeof(_Proceso));
-
-    return -1;
+    return 1;
 }
 
 int cargarComandosArchivo(int *fHandler, _Proceso *cmdList)

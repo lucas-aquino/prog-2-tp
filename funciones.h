@@ -9,10 +9,10 @@
 #define CH_OBJ_DR       219 //Direccion del objeto
 
 /* Pantalla */
-#define SS_COL           61
-#define SS_ROW           21
+#define SS_COL           62
+#define SS_ROW           22
 
-#define T_REFRESH       100 // Tiempo de espera para el programa
+#define T_REFRESH       300 // Tiempo de espera para el programa
 
 /* teclas de comandos */
 #define KB_ARCH_F      1059 //[F1]  Limpia la lista de procesos y ejecuta el archivo hasta el final
@@ -79,8 +79,7 @@ typedef struct
 /** FUNCIONES ********/
 
 //Display
-void clearDisplay(char display[SS_ROW][SS_COL]);
-void refreshDisplay(char display[SS_ROW][SS_COL]);
+void fillDisplay(char display[SS_ROW][SS_COL]);
 void displayMenu();
 void ubicarPlayer(_Objeto *player, char display[SS_ROW][SS_COL]);
 void desplazarPlayer(_Objeto *player, _Proceso *cmdList, int *punteroProceso, int *contadorProceso, int *cantidadProcesos);
