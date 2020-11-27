@@ -26,7 +26,7 @@ int main()
     float sumaPromRender = 0;
     float promedioRender = 0;
 
-    int cantidadProc = 5;
+    int cantidadProc = 0;
     int punteroProc  = 0;
     int contadorProc = 0;
 
@@ -41,44 +41,20 @@ int main()
 
     _Proceso *cmdList;
 
-    cmdList = (_Proceso *)calloc(cantidadProc,sizeof(_Proceso));
+    cmdList = (_Proceso *)malloc(sizeof(_Proceso) * cantidadProc);
 
-    strcpy(cmdList[0].nombre, "ABA");
-    cmdList[0].estado = PORHACER;
-    cmdList[0].value  = 5;
-    cmdList[0].cmd    = ABAJO;
+    _Proceso nuevoProc;
+    int varUsuario;
 
-    strcpy(cmdList[1].nombre, "IZQ");
-    cmdList[1].estado = PORHACER;
-    cmdList[1].value  = 5;
-    cmdList[1].cmd    = IZQUIERDA;
-
-    strcpy(cmdList[2].nombre, "ARR");
-    cmdList[2].estado = PORHACER;
-    cmdList[2].value  = 5;
-    cmdList[2].cmd    = ARRIBA;
-
-    strcpy(cmdList[3].nombre, "DER");
-    cmdList[3].estado = PORHACER;
-    cmdList[3].value  = 5;
-    cmdList[3].cmd    = DERECHA;
-
-    strcpy(cmdList[4].nombre, "ABA");
-    cmdList[4].estado = PORHACER;
-    cmdList[4].value  = 0;
-    cmdList[4].cmd    = ABAJO;
-
-
-    player.pos.x = 11;
-    player.pos.y = 5;
+    player.pos.x = 20;
+    player.pos.y = 10;
 
     player.dir = ARRIBA;
 
     char display[SS_ROW][SS_COL];
 
-    clearDisplay(display);
+    fillDisplay(display);
 
-    //agregarComandoLista(cmdList, &derechaProcesoNuevo, &cantidadProc, CMD_APPEND);
 
     while(1)
     {
@@ -93,10 +69,37 @@ int main()
                 key = getch() + 1000;
 
             if(key == 27)
+            {
+                free(cmdList);
                 break;
+            }
 
             if(key == KB_INCIO)
             {
+                printf("\nINICIO POSICION X: ");
+                scanf("%d", &varUsuario);
+
+                varUsuario += 2;
+
+                if(varUsuario > SS_MAX_X)
+                    varUsuario = SS_MAX_X;
+                else if(varUsuario < 0)
+                    varUsuario = 2;
+
+                player.pos.x = varUsuario;
+
+                printf("INICIO POSICION Y: ");
+                scanf("%d", &varUsuario);
+                fflush(stdin);
+
+                varUsuario++;
+
+                if(varUsuario > SS_MAX_Y)
+                    varUsuario = SS_MAX_Y;
+                else if(varUsuario < 0)
+                    varUsuario = 1;
+
+                player.pos.y = varUsuario;
 
             }
 
@@ -104,12 +107,123 @@ int main()
             {
                 if(cmdList[punteroProc].estado == HACIENDO)
                     cmdList[punteroProc].estado = PAUSADO;
-                else
+                else if(cmdList[punteroProc].estado != ERROR && cmdList[punteroProc].estado != HECHO)
                     cmdList[punteroProc].estado = HACIENDO;
+                else if(punteroProc < cantidadProc - 1)
+                {
+                    punteroProc++;
+                    cmdList[punteroProc].estado = HACIENDO;
+                }
+            }
+
+            if(key == KB_ARRIBA)
+            {
+
+                strcpy(nuevoProc.nombre ,"ARR");
+                nuevoProc.estado = PORHACER;
+                nuevoProc.cmd = ARRIBA;
+
+                printf("\nDESPLAZAR HACIA ARRIBA: ");
+
+                scanf("%d", &varUsuario);
+                fflush(stdin);
+
+                nuevoProc.value = varUsuario;
+
+                cantidadProc++;
+                cmdList = (_Proceso *)realloc(cmdList, sizeof(_Proceso) * cantidadProc);
+
+                if(cmdList == NULL)
+                {
+                    printf("No se ha podidio agregar el nuevo comando por falta de memoria");
+                    exit(1);
+                }
+
+                memcpy(&cmdList[cantidadProc - 1], &nuevoProc, sizeof(_Proceso));
+
+            }
+
+            if(key == KB_DERECHA)
+            {
+
+                strcpy(nuevoProc.nombre ,"DER");
+                nuevoProc.estado = PORHACER;
+                nuevoProc.cmd = DERECHA;
+
+                printf("\nDESPLAZAR HACIA LA DERECHA: ");
+
+                scanf("%d", &varUsuario);
+                fflush(stdin);
+
+                nuevoProc.value = varUsuario;
+
+                cantidadProc++;
+                cmdList = (_Proceso *)realloc(cmdList, sizeof(_Proceso) * cantidadProc);
+
+                if(cmdList == NULL)
+                {
+                    printf("No se ha podidio agregar el nuevo comando por falta de memoria");
+                    exit(1);
+                }
+
+                memcpy(&cmdList[cantidadProc - 1], &nuevoProc, sizeof(_Proceso));
             }
 
 
 
+            if(key == KB_ABAJO)
+            {
+
+                strcpy(nuevoProc.nombre ,"ABA");
+                nuevoProc.estado = PORHACER;
+                nuevoProc.cmd = ABAJO;
+
+                printf("\nDESPLAZAR HACIA ABAJO: ");
+
+                scanf("%d", &varUsuario);
+                fflush(stdin);
+
+                nuevoProc.value = varUsuario;
+
+                cantidadProc++;
+                cmdList = (_Proceso *)realloc(cmdList, sizeof(_Proceso) * cantidadProc);
+
+                if(cmdList == NULL)
+                {
+                    printf("No se ha podidio agregar el nuevo comando por falta de memoria");
+                    exit(1);
+                }
+
+                memcpy(&cmdList[cantidadProc - 1], &nuevoProc, sizeof(_Proceso));
+
+            }
+
+            if(key == KB_IZQUIERDA)
+            {
+
+                strcpy(nuevoProc.nombre ,"IZQ");
+                nuevoProc.estado = PORHACER;
+                nuevoProc.cmd = IZQUIERDA;
+
+                printf("\nDESPLAZAR HACIA LA IZQUIERDA: ");
+
+                scanf("%d", &varUsuario);
+                fflush(stdin);
+
+                nuevoProc.value = varUsuario;
+
+                cantidadProc++;
+                cmdList = (_Proceso *)realloc(cmdList, sizeof(_Proceso) * cantidadProc);
+
+                if(cmdList == NULL)
+                {
+                    printf("No se ha podidio agregar el nuevo comando por falta de memoria");
+                    exit(1);
+                }
+
+                memcpy(&cmdList[cantidadProc - 1], &nuevoProc, sizeof(_Proceso));
+
+            }
 
         }
         system("cls");
@@ -135,23 +249,37 @@ int main()
         fillDisplay(display);
 
         //Movimiento del Jugador
-        desplazarPlayer(&player, cmdList, &punteroProc, &contadorProc, &cantidadProc);
-        ubicarPlayer(&player, display);
+        if(cantidadProc != 0)
+            desplazarPlayer(&player, cmdList, &punteroProc, &contadorProc, &cantidadProc);
 
+
+        //CLI
         displayMenu();
-
-        //Mostrar Display
+        ubicarPlayer(&player, display);
         puts((char *)display);
 
 
-        printf("\nPLAYER POS: x%2d y%2d DIR:%2d\n", player.pos.x, player.pos.y, player.dir);
+        printf("\nPLAYER POS: x%2d y%2d DIR:%2d\n", player.pos.x - 2, player.pos.y - 1, player.dir);
 
-        printf("\nCANTIDAD PROCESOS: %d", cantidadProc);
-        puts("\nPROCESO ACTUAL:");
+        printf("\nCMD SIZE: %d", sizeof(_Proceso));
+
+        printf("\nCMDLIST SIZE: %d", sizeof(_Proceso) * cantidadProc);
+
+        printf("\nMEMPOS CMDLIST: %p", cmdList);
+
+        printf("\nPTR CMD: %d\n", punteroProc);
+
+        printf("\nCANTIDAD COMANDO: %d", cantidadProc);
+
+        puts("\nLISTA DE COMANDOS:");
+
         puts("\tCMD\tESTADO\tVALUE");
 
-        if(cmdList[punteroProc].estado  == HACIENDO && punteroProc < 5)
-            printf("\t%-3s\t%-6d\t%-5d\n", cmdList[punteroProc].nombre, cmdList[punteroProc].estado, cmdList[punteroProc].value);
+        for(int i = 0; i < cantidadProc; i++)
+        {
+            if(cmdList[i].estado != HECHO)
+                printf("\t%-3s\t%-6d\t%-5d\n", cmdList[i].nombre, cmdList[i].estado, cmdList[i].value);
+        }
 
         printf("\nPANTALLA: %d", sizeof(display));
         printf("\nFRAME: %3d\n", frame);
@@ -162,7 +290,7 @@ int main()
         printf("RENDER: %3d ms\n", end);
 
         sumaPromRender += end;
-        promedioRender = sumaPromRender / (float) frame;
+        promedioRender = sumaPromRender / (float)frame;
         printf("PROMEDIO: %3.1f ms\n", promedioRender);
 
         while((clock() - start) <= T_REFRESH);

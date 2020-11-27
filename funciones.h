@@ -12,6 +12,9 @@
 #define SS_COL           62
 #define SS_ROW           22
 
+#define SS_MAX_X         58
+#define SS_MAX_Y         20
+
 #define T_REFRESH       300 // Tiempo de espera para el programa
 
 /* teclas de comandos */
@@ -30,6 +33,7 @@
 #define CMD_OVERRIDE      1 // Se sobreescribe la lista de comandos
 
 /*********************/
+
 
 /** ENUMS ************/
 
@@ -53,13 +57,13 @@ typedef enum Estado{
 
 /** ESTRUCTURAS ******/
 
-typedef struct
+typedef struct Coordenada
 {
     int x;
     int y;
 } _Coordenada;
 
-typedef struct
+typedef struct Proceso
 {
     char nombre[4];
     _Comando cmd;
@@ -67,7 +71,13 @@ typedef struct
     _Estado estado;
 } _Proceso;
 
-typedef struct
+typedef struct CmdList
+{
+    _Proceso *cmd;
+    struct CmdList *sig;
+} _CmdList;
+
+typedef struct Objeto
 {
    _Coordenada  pos;
    _Coordenada  size;
@@ -90,7 +100,14 @@ int getFHandler(int *fHandler, char *fPath);
 //Comandos
 int cargarComandosArchivo(int *fHandler, _Proceso *cmdList);
 
-int agregarComandoLista(_Proceso *cmdList, _Proceso *cmdAgregar, int *cantidadProcesos, int modeList);
+void cmdListCrear(_CmdList **cmdList);
+
+int cmdListVacia(_CmdList *cmdList);
+
+void cmdListAgregarCmd(_CmdList **cmdList, _Proceso cmdNew);
+
+void cmdListObtenerCmd(_CmdList **cmdList, _Proceso *cmdNew);
+
 
 /*********************/
 

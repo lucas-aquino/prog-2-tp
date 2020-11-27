@@ -13,9 +13,6 @@
 
 /** FUNCIONES ********/
 
-
-
-
 //DISPLAY
 void fillDisplay(char display[SS_ROW][SS_COL])
 {
@@ -52,27 +49,31 @@ void ubicarPlayer(_Objeto *player, char display[SS_ROW][SS_COL])
 
 void desplazarPlayer(_Objeto *player, _Proceso *cmdList, int *punteroProceso, int *contadorProceso, int *cantidadProcesos)
 {
-    if(*cantidadProcesos > 0 && cmdList[*punteroProceso].estado == HACIENDO)
+    if(cmdList[*punteroProceso].estado == HACIENDO)
     {
         player->dir = cmdList[*punteroProceso].cmd;
+
         if(cmdList[*punteroProceso].value > 0)
         {
             if(abs(cmdList[*punteroProceso].cmd) > 1)
             {
 
-                if(cmdList[*punteroProceso].cmd == DERECHA && player->pos.x < SS_COL - 2)
+                if(cmdList[*punteroProceso].cmd == DERECHA && player->pos.x < SS_COL - 4)
                     player->pos.x += 1;
                 else if(cmdList[*punteroProceso].cmd == IZQUIERDA && player->pos.x > 2 )
                     player->pos.x -= 1;
                 else
                     cmdList[*punteroProceso].estado = ERROR;
+
             }else
             {
+
                 if(player->pos.y >= 2 && player->pos.y <= SS_ROW - 3)
                 {
                     player->pos.y += cmdList[*punteroProceso].cmd;
                 }else
                     cmdList[*punteroProceso].estado = ERROR;
+
             }
             (*contadorProceso)++;
         }
@@ -84,13 +85,17 @@ void desplazarPlayer(_Objeto *player, _Proceso *cmdList, int *punteroProceso, in
 
         if(cmdList[*punteroProceso].estado == ERROR ||  cmdList[*punteroProceso].estado == HECHO)
         {
-            (*punteroProceso)++;
-            cmdList[*punteroProceso].estado = HACIENDO;
+            if(*punteroProceso < (*cantidadProcesos) - 1)
+            {
+                (*punteroProceso)++;
+                cmdList[*punteroProceso].estado = HACIENDO;
+            }
+
             *contadorProceso = 0;
-            (*cantidadProcesos)--;
         }
     }
 }
+
 
 
 
@@ -103,7 +108,7 @@ void displayMenu()
     "          [F1]  Seleccione un archivo.\n"
     "          [F2]  Detener el jugador.\n"
     "          [F3]  Reemplazar comandos por un archivo.\n"
-    "          [F4]  Pausar o Reanudar.\n"
+    "          [F4]  Iniciar o Pausar.\n"
     "          [F5]  Definir la posicion de inicio.\n\n"
     "   Agregar directamente comandos a la lista de comandos:\n\n"
     "      [ARRIBA]  Indicar los pasos hacia ARRIBA.\n"
@@ -127,14 +132,6 @@ int getFHandler(int *fHandler, char *fPath)
 
         return -1;
     }
-
-    return 1;
-}
-
-int agregarComandoLista(_Proceso *cmdList, _Proceso *cmdAgregar, int *cantidadProcesos, int modeList)
-{
-
-
 
     return 1;
 }
