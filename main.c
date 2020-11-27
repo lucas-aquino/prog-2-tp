@@ -130,16 +130,7 @@ int main()
 
                 nuevoProc.value = varUsuario;
 
-                cantidadProc++;
-                cmdList = (_Proceso *)realloc(cmdList, sizeof(_Proceso) * cantidadProc);
-
-                if(cmdList == NULL)
-                {
-                    printf("No se ha podidio agregar el nuevo comando por falta de memoria");
-                    exit(1);
-                }
-
-                memcpy(&cmdList[cantidadProc - 1], &nuevoProc, sizeof(_Proceso));
+                cmdList = cmdListAgregar(cmdList, nuevoProc, &cantidadProc, CMD_APPEND);
 
             }
 
@@ -157,16 +148,7 @@ int main()
 
                 nuevoProc.value = varUsuario;
 
-                cantidadProc++;
-                cmdList = (_Proceso *)realloc(cmdList, sizeof(_Proceso) * cantidadProc);
-
-                if(cmdList == NULL)
-                {
-                    printf("No se ha podidio agregar el nuevo comando por falta de memoria");
-                    exit(1);
-                }
-
-                memcpy(&cmdList[cantidadProc - 1], &nuevoProc, sizeof(_Proceso));
+                cmdList = cmdListAgregar(cmdList, nuevoProc, &cantidadProc, CMD_APPEND);
             }
 
 
@@ -185,16 +167,7 @@ int main()
 
                 nuevoProc.value = varUsuario;
 
-                cantidadProc++;
-                cmdList = (_Proceso *)realloc(cmdList, sizeof(_Proceso) * cantidadProc);
-
-                if(cmdList == NULL)
-                {
-                    printf("No se ha podidio agregar el nuevo comando por falta de memoria");
-                    exit(1);
-                }
-
-                memcpy(&cmdList[cantidadProc - 1], &nuevoProc, sizeof(_Proceso));
+                cmdList = cmdListAgregar(cmdList, nuevoProc, &cantidadProc, CMD_APPEND);
 
             }
 
@@ -212,16 +185,7 @@ int main()
 
                 nuevoProc.value = varUsuario;
 
-                cantidadProc++;
-                cmdList = (_Proceso *)realloc(cmdList, sizeof(_Proceso) * cantidadProc);
-
-                if(cmdList == NULL)
-                {
-                    printf("No se ha podidio agregar el nuevo comando por falta de memoria");
-                    exit(1);
-                }
-
-                memcpy(&cmdList[cantidadProc - 1], &nuevoProc, sizeof(_Proceso));
+                cmdList = cmdListAgregar(cmdList, nuevoProc, &cantidadProc, CMD_APPEND);
 
             }
 
@@ -297,7 +261,7 @@ int main()
     }
 
     free(cmdList);
-    //close(fHandler);
+    close(fHandler);
     return 0;
 }
 /*********************/

@@ -71,12 +71,6 @@ typedef struct Proceso
     _Estado estado;
 } _Proceso;
 
-typedef struct CmdList
-{
-    _Proceso *cmd;
-    struct CmdList *sig;
-} _CmdList;
-
 typedef struct Objeto
 {
    _Coordenada  pos;
@@ -94,9 +88,14 @@ void displayMenu();
 void ubicarPlayer(_Objeto *player, char display[SS_ROW][SS_COL]);
 void desplazarPlayer(_Objeto *player, _Proceso *cmdList, int *punteroProceso, int *contadorProceso, int *cantidadProcesos);
 
+//cmd
+
+_Proceso *cmdListAgregar(_Proceso *cmdList, _Proceso nuevoCmd, int *cantidadProc, int agregarModo);
+
 //Manejo de Archivos
 int getFHandler(int *fHandler, char *fPath);
 
+_Proceso *cargarComandosArchivo(int *fHandler, _Proceso *cmdList);
 
 /*********************/
 

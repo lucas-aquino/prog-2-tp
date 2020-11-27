@@ -27,6 +27,33 @@ void fillDisplay(char display[SS_ROW][SS_COL])
     display[SS_ROW - 1][SS_COL - 1]  = '\0';
 }
 
+//Comandos
+
+_Proceso *cmdListAgregar(_Proceso *cmdList, _Proceso nuevoCmd, int *cantidadProc, int agregarModo)
+{
+
+    if(agregarModo == CMD_APPEND)
+    {
+        (*cantidadProc)++;
+        cmdList = (_Proceso *)realloc(cmdList, sizeof(_Proceso) * (*cantidadProc));
+    }else
+    {
+        *cantidadProc = 1;
+        free(cmdList);
+        cmdList = (_Proceso *)malloc(sizeof(_Proceso) * (*cantidadProc));
+    }
+
+    if(cmdList == NULL)
+    {
+        printf("No se ha podidio agregar el nuevo comando por falta de memoria");
+        exit(1);
+    }
+
+    memcpy(&cmdList[(*cantidadProc) - 1], &nuevoCmd, sizeof(_Proceso));
+
+    return cmdList;
+}
+
 //Jugador
 void ubicarPlayer(_Objeto *player, char display[SS_ROW][SS_COL])
 {
@@ -133,10 +160,13 @@ int getFHandler(int *fHandler, char *fPath)
     return 1;
 }
 
-int cargarComandosArchivo(int *fHandler, _Proceso *cmdList)
+
+
+_Proceso *cargarComandosArchivo(int *fHandler, _Proceso *cmdList)
 {
 
-    return 0;
+    close(*fHandler);
+    return cmdList;
 }
 
 /*********************/
