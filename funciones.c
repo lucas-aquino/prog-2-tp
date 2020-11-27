@@ -96,9 +96,6 @@ void desplazarPlayer(_Objeto *player, _Proceso *cmdList, int *punteroProceso, in
     }
 }
 
-
-
-
 //Menu
 void displayMenu()
 {
@@ -138,6 +135,7 @@ int getFHandler(int *fHandler, char *fPath)
 
 int cargarComandosArchivo(int *fHandler, _Proceso *cmdList)
 {
+
     return 0;
 }
 

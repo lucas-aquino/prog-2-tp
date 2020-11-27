@@ -97,17 +97,6 @@ void desplazarPlayer(_Objeto *player, _Proceso *cmdList, int *punteroProceso, in
 //Manejo de Archivos
 int getFHandler(int *fHandler, char *fPath);
 
-//Comandos
-int cargarComandosArchivo(int *fHandler, _Proceso *cmdList);
-
-void cmdListCrear(_CmdList **cmdList);
-
-int cmdListVacia(_CmdList *cmdList);
-
-void cmdListAgregarCmd(_CmdList **cmdList, _Proceso cmdNew);
-
-void cmdListObtenerCmd(_CmdList **cmdList, _Proceso *cmdNew);
-
 
 /*********************/
 
