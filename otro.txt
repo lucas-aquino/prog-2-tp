@@ -1,0 +1,4 @@
+arriba(6)
+abajo(10)
+inicio(2,5)
+izquierda(3)

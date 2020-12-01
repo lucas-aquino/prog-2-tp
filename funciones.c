@@ -78,9 +78,10 @@ void desplazarPlayer(_Objeto *player, _Proceso *cmdList, int *punteroProceso, in
 {
     if(cmdList[*punteroProceso].estado == HACIENDO)
     {
-        player->dir = cmdList[*punteroProceso].cmd;
-
-        if(cmdList[*punteroProceso].value > 0)
+        if(player->dir != cmdList[*punteroProceso].cmd)
+        {
+            player->dir = cmdList[*punteroProceso].cmd;
+        }else if(cmdList[*punteroProceso].value > 0)
         {
             if(abs(cmdList[*punteroProceso].cmd) > 1)
             {
@@ -95,22 +96,24 @@ void desplazarPlayer(_Objeto *player, _Proceso *cmdList, int *punteroProceso, in
             }else
             {
 
-                if(player->pos.y >= 2 && player->pos.y <= SS_ROW - 3)
-                {
-                    player->pos.y += cmdList[*punteroProceso].cmd;
-                }else
+                if(cmdList[*punteroProceso].cmd == ABAJO && player->pos.y < SS_ROW - 2)
+                    player->pos.y += 1;
+                else if(cmdList[*punteroProceso].cmd == ARRIBA && player->pos.y > 1 )
+                    player->pos.y -= 1;
+                else
                     cmdList[*punteroProceso].estado = ERROR;
 
             }
             (*contadorProceso)++;
         }
 
-        if(*contadorProceso == cmdList[*punteroProceso].value && cmdList[*punteroProceso].estado != ERROR)
+
+        if(*contadorProceso >= cmdList[*punteroProceso].value && cmdList[*punteroProceso].estado != ERROR)
         {
             cmdList[*punteroProceso].estado = HECHO;
         }
 
-        if(cmdList[*punteroProceso].estado == ERROR ||  cmdList[*punteroProceso].estado == HECHO)
+        if(cmdList[*punteroProceso].estado == HECHO)
         {
             if(*punteroProceso < (*cantidadProcesos) - 1)
             {
@@ -162,8 +165,148 @@ int getFHandler(int *fHandler, char *fPath)
 
 
 
-_Proceso *cargarComandosArchivo(int *fHandler, _Proceso *cmdList)
+_Proceso *cargarComandosArchivo(int *fHandler, _Proceso *cmdList, int *cantidadProcesos, int listMode)
 {
+    char cmd[16];
+    int linea;
+    int fSize;
+    int l, i;
+    _Proceso cmdAux;
+    cmdAux.estado = PORHACER;
+    char args[16];
+
+    fSize = lseek(*fHandler, 0, SEEK_END);
+    lseek(*fHandler, 0,SEEK_SET);
+
+    while(1)
+    {
+        l = 0;
+        for(i = 0; i < 16; i++)
+        {
+            if(read(*fHandler, &cmd[l], 1))
+            {
+                if(cmd[l] == '(')
+                {
+                    cmd[l] = '\0';
+                    break;
+                }else
+                {
+                    if(isalpha(cmd[l]))
+                        l++;
+                }
+
+            }else
+                break;
+        }
+        i = 0;
+        while(cmd[i])
+        {
+            cmd[i] = toupper(cmd[i]);
+            i++;
+        }
+
+        strcpy(cmdAux.nombre, cmd);
+
+        if(strcmp(cmd, "INICIO") == 0)
+        {
+            cmdAux.cmd = INICIO;
+            cmdAux.value = 0;
+
+            l = 0;
+            for(i = 0; i < 16; i++)
+            {
+                if(read(*fHandler, &args[l], 1))
+                {
+                    if(args[l] == ',')
+                    {
+                        args[l] = '\0';
+                        break;
+                    }else
+                    {
+                        if(isdigit(args[l]))
+                            l++;
+                    }
+                }else
+                    return 0;
+            }
+
+            if(atoi(args) > SS_MAX_X)
+                cmdAux.pos.x = SS_MAX_X;
+            else if(atoi(args) < 0)
+                cmdAux.pos.x = 2;
+            else
+                cmdAux.pos.x = atoi(args);
+
+            l = 0;
+            for(i = 0; i < 16; i++)
+            {
+                if(read(*fHandler, &args[l], 1))
+                {
+                    if(args[l] == ')')
+                    {
+                        args[l] = '\0';
+                        break;
+                    }else
+                    {
+                        if(isdigit(args[l]))
+                            l++;
+                    }
+                }else
+                    return 0;
+            }
+
+            if(atoi(args) > SS_MAX_Y)
+                cmdAux.pos.y = SS_MAX_Y;
+            else if(atoi(args) < 0)
+                cmdAux.pos.y = 1;
+            else
+                cmdAux.pos.y = atoi(args);
+
+
+        }else
+        {
+            cmdAux.pos.x = -1;
+            cmdAux.pos.y = -1;
+
+            l = 0;
+            for(i = 0; i < 16; i++)
+            {
+                if(read(*fHandler, &args[l], 1))
+                {
+                    if(args[l] == ')')
+                    {
+                        args[l] == '\0';
+                        break;
+                    }else
+                    {
+                        if(isdigit(args[i]))
+                            l++;
+                    }
+                }else
+                    return 0;
+            }
+
+            if(strcmp(cmd, "ARRIBA") == 0)
+                cmdAux.cmd = ARRIBA;
+            else if(strcmp(cmd, "IZQUIERDA") == 0)
+                cmdAux.cmd = IZQUIERDA;
+            else if(strcmp(cmd, "ABAJO") == 0)
+                cmdAux.cmd = ABAJO;
+            else if(strcmp(cmd, "DERECHA") == 0)
+                cmdAux.cmd = DERECHA;
+            else
+                return 0;
+
+            cmdAux.value = atoi(args);
+        }
+
+        //printf("\n%10s : { val : %2d, posX : %2d, posY : %2d }", cmdAux.nombre, cmdAux.value, cmdAux.pos.x, cmdAux.pos.y);
+
+        cmdList = cmdListAgregar(cmdList, cmdAux, cantidadProcesos, CMD_APPEND);
+
+        if(lseek(*fHandler, 0, SEEK_CUR) >= fSize - 5)
+            break;
+    }
 
     close(*fHandler);
     return cmdList;

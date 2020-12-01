@@ -18,7 +18,7 @@
 #define T_REFRESH       300 // Tiempo de espera para el programa
 
 /* teclas de comandos */
-#define KB_ARCH_F      1059 //[F1]  Limpia la lista de procesos y ejecuta el archivo hasta el final
+#define KB_ARCH_OVE    1059 //[F1]  Limpia la lista de procesos y ejecuta el archivo hasta el final
 #define KB_DETENER     1060 //[F2]  Detener el proceso
 #define KB_ARCHIVO     1061 //[F3]  Selecciona un archivo y agrega los comando a lista de procesos
 #define KB_PAUSA       1062 //[F4]  Pausar y reanudar proceso
@@ -38,6 +38,7 @@
 /** ENUMS ************/
 
 typedef enum Comandos {
+    INICIO    =  0,
     ARRIBA    = -1,
     DERECHA   =  2,
     ABAJO     =  1,
@@ -65,9 +66,10 @@ typedef struct Coordenada
 
 typedef struct Proceso
 {
-    char nombre[4];
+    char nombre[10];
     _Comando cmd;
     short value;
+    _Coordenada pos;
     _Estado estado;
 } _Proceso;
 
@@ -95,7 +97,7 @@ _Proceso *cmdListAgregar(_Proceso *cmdList, _Proceso nuevoCmd, int *cantidadProc
 //Manejo de Archivos
 int getFHandler(int *fHandler, char *fPath);
 
-_Proceso *cargarComandosArchivo(int *fHandler, _Proceso *cmdList);
+_Proceso *cargarComandosArchivo(int *fHandler, _Proceso *cmdList, int *cantidadProc, int listMode);
 
 /*********************/
 

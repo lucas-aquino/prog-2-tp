@@ -32,7 +32,7 @@ int main()
 
     int fHandler;
     int fSize;
-    char *fPath = "algo.txt";
+    char fPath[80];
     char *buffer;
 
     char *token;
@@ -76,6 +76,10 @@ int main()
 
             if(key == KB_INCIO)
             {
+                strcpy(nuevoProc.nombre, "INICIO");
+                nuevoProc.cmd = INICIO;
+                nuevoProc.estado = PORHACER;
+
                 printf("\nINICIO POSICION X: ");
                 scanf("%d", &varUsuario);
 
@@ -86,7 +90,7 @@ int main()
                 else if(varUsuario < 0)
                     varUsuario = 2;
 
-                player.pos.x = varUsuario;
+                nuevoProc.pos.x = varUsuario;
 
                 printf("INICIO POSICION Y: ");
                 scanf("%d", &varUsuario);
@@ -99,7 +103,12 @@ int main()
                 else if(varUsuario < 0)
                     varUsuario = 1;
 
-                player.pos.y = varUsuario;
+                nuevoProc.pos.y = varUsuario;
+
+                cmdList = cmdListAgregar(cmdList, nuevoProc, &cantidadProc, CMD_APPEND);
+
+                nuevoProc.pos.x = -1;
+                nuevoProc.pos.y = -1;
 
             }
 
@@ -119,7 +128,7 @@ int main()
             if(key == KB_ARRIBA)
             {
 
-                strcpy(nuevoProc.nombre ,"ARR");
+                strcpy(nuevoProc.nombre ,"ARRIBA");
                 nuevoProc.estado = PORHACER;
                 nuevoProc.cmd = ARRIBA;
 
@@ -137,7 +146,7 @@ int main()
             if(key == KB_DERECHA)
             {
 
-                strcpy(nuevoProc.nombre ,"DER");
+                strcpy(nuevoProc.nombre ,"DERECHA");
                 nuevoProc.estado = PORHACER;
                 nuevoProc.cmd = DERECHA;
 
@@ -156,7 +165,7 @@ int main()
             if(key == KB_ABAJO)
             {
 
-                strcpy(nuevoProc.nombre ,"ABA");
+                strcpy(nuevoProc.nombre ,"ABAJO");
                 nuevoProc.estado = PORHACER;
                 nuevoProc.cmd = ABAJO;
 
@@ -174,7 +183,7 @@ int main()
             if(key == KB_IZQUIERDA)
             {
 
-                strcpy(nuevoProc.nombre ,"IZQ");
+                strcpy(nuevoProc.nombre ,"IZQUIERDA");
                 nuevoProc.estado = PORHACER;
                 nuevoProc.cmd = IZQUIERDA;
 
@@ -189,28 +198,38 @@ int main()
 
             }
 
+            if(key == KB_ARCHIVO)
+            {
+                printf("INGRESE EL NOMBRE DEL ARCHIVO: ");
+
+                scanf("%s", fPath);
+
+                if(getFHandler(&fHandler, fPath))
+                {
+                    cmdList = cargarComandosArchivo(&fHandler, cmdList, &cantidadProc, CMD_OVERRIDE);
+                }else
+                    printf("Archivo No Encontrado!!");
+            }
+
         }
         system("cls");
 
-
-
-        /*
-        getFHandler(&fHandler, fPath);
-
-        fSize = lseek(fHandler, 0, SEEK_END);
-
-        buffer = (char *)malloc(fSize);
-
-        lseek(fHandler, 0, SEEK_SET);
-
-        read(fHandler, buffer, sizeof(char) * fSize);
-
-        //printf("%d", fSize);
-
-        token = strtok(buffer, "%[^\n]");*/
-
-
         fillDisplay(display);
+
+        if(cmdList[punteroProc].cmd == INICIO && cmdList[punteroProc].estado == HACIENDO)
+        {
+            player.dir = ARRIBA;
+
+            player.pos.x = cmdList[punteroProc].pos.x;
+            player.pos.y = cmdList[punteroProc].pos.y;
+
+            cmdList[punteroProc].estado = HECHO;
+            if(punteroProc < cantidadProc - 1)
+            {
+                punteroProc++;
+                cmdList[punteroProc].estado = HACIENDO;
+            }
+        }
 
         //Movimiento del Jugador
         if(cantidadProc != 0)
@@ -235,14 +254,19 @@ int main()
 
         printf("\nCANTIDAD COMANDO: %d", cantidadProc);
 
-        puts("\nLISTA DE COMANDOS:");
+        puts("\nLISTA DE COMANDOS POR HACER:");
 
-        puts("\tCMD\tESTADO\tVALUE");
+        puts("\tCMD\t\tESTADO\t\tVALUE");
 
         for(int i = 0; i < cantidadProc; i++)
         {
-            if(cmdList[i].estado != HECHO)
-                printf("\t%-3s\t%-6d\t%-5d\n", cmdList[i].nombre, cmdList[i].estado, cmdList[i].value);
+            if(/*cmdList[i].estado == PORHACER ||*/ cmdList[i].estado == HACIENDO)
+            {
+                if(cmdList[i].cmd == INICIO)
+                    printf("\t%-10s\t%-7d\t\t(%2d,%2d)\n", cmdList[i].nombre, cmdList[i].estado, cmdList[i].pos.x - 2, cmdList[i].pos.y - 1);
+                else
+                    printf("\t%-10s\t%-7d\t\t%-5d\n", cmdList[i].nombre, cmdList[i].estado, cmdList[i].value);
+            }
         }
 
         printf("\nPANTALLA: %d", sizeof(display));
@@ -259,6 +283,10 @@ int main()
 
         while((clock() - start) <= T_REFRESH);
     }
+
+    system("cls");
+    printf("\n\n\tEL PROGRAMA SE CERRARA ENSEGIDA :(\n\n");
+    while((clock() - start) <= 5000);
 
     free(cmdList);
     close(fHandler);
