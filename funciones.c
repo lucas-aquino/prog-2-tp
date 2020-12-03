@@ -27,6 +27,11 @@ void fillDisplay(char display[SS_ROW][SS_COL])
     display[SS_ROW - 1][SS_COL - 1]  = '\0';
 }
 
+
+
+
+
+
 //Comandos
 
 _Proceso *cmdListAgregar(_Proceso *cmdList, _Proceso nuevoCmd, int *cantidadProc, int agregarModo)
@@ -54,14 +59,16 @@ _Proceso *cmdListAgregar(_Proceso *cmdList, _Proceso nuevoCmd, int *cantidadProc
     return cmdList;
 }
 
+
+
+
+
 //Jugador
 void ubicarPlayer(_Objeto *player, char display[SS_ROW][SS_COL])
 {
     memset(&display[player->pos.y - 1][player->pos.x - 2], CH_OBJ, sizeof(char) * 5);
     memset(&display[player->pos.y][player->pos.x - 2],     CH_OBJ, sizeof(char) * 5);
     memset(&display[player->pos.y + 1][player->pos.x - 2], CH_OBJ, sizeof(char) * 5);
-
-    memset(&display[player->pos.y][player->pos.x], 254, sizeof(char));
 
     if(abs(player->dir) > 1)
     {
@@ -74,7 +81,9 @@ void ubicarPlayer(_Objeto *player, char display[SS_ROW][SS_COL])
     }
 }
 
-void desplazarPlayer(_Objeto *player, _Proceso *cmdList, int *punteroProceso, int *contadorProceso, int *cantidadProcesos)
+
+
+void desplazarPlayer(_Objeto *player, _Proceso *cmdList, int *punteroProceso, int *contadorProceso, int *cantidadProcesos, int isPasos)
 {
     if(cmdList[*punteroProceso].estado == HACIENDO)
     {
@@ -115,35 +124,35 @@ void desplazarPlayer(_Objeto *player, _Proceso *cmdList, int *punteroProceso, in
 
         if(cmdList[*punteroProceso].estado == HECHO)
         {
-            if(*punteroProceso < (*cantidadProcesos) - 1)
-            {
-                (*punteroProceso)++;
-                cmdList[*punteroProceso].estado = HACIENDO;
-            }
+            if(*punteroProceso < (*cantidadProcesos) - 1 && !isPasos)
+                cmdList[++(*punteroProceso)].estado = HACIENDO;
 
             *contadorProceso = 0;
         }
     }
 }
 
+
+
+
+
 //Menu
 void displayMenu()
 {
     puts(
   "\n   PROGRAMACION II : TP Final - Lucas Aquino  2020\n\n"
-    "   Controles:\n\n"
     "          [F1]  Seleccione un archivo.\n"
     "          [F2]  Detener el jugador.\n"
-    "          [F3]  Reemplazar comandos por un archivo.\n"
+    "          [F3]  Ejecutar un archivo paso por paso\n"
     "          [F4]  Iniciar o Pausar.\n"
     "          [F5]  Definir la posicion de inicio.\n\n"
-    "   Agregar directamente comandos a la lista de comandos:\n\n"
     "      [ARRIBA]  Indicar los pasos hacia ARRIBA.\n"
     "     [DERECHA]  Indicar los pasos hacia la DERECHA.\n"
     "       [ABAJO]  Indicar los pasos hacia ABAJO.\n"
     "   [IZQUIERDA]  Indicar los pasos hacia la IZQUIERDA.\n\n"
     );
 }
+
 
 
 
@@ -165,10 +174,10 @@ int getFHandler(int *fHandler, char *fPath)
 
 
 
+
 _Proceso *cargarComandosArchivo(int *fHandler, _Proceso *cmdList, int *cantidadProcesos, int listMode)
 {
     char cmd[16];
-    int linea;
     int fSize;
     int l, i;
     _Proceso cmdAux;
@@ -232,10 +241,10 @@ _Proceso *cargarComandosArchivo(int *fHandler, _Proceso *cmdList, int *cantidadP
 
             if(atoi(args) > SS_MAX_X)
                 cmdAux.pos.x = SS_MAX_X;
-            else if(atoi(args) < 0)
+            else if(atoi(args) <= 0)
                 cmdAux.pos.x = 2;
             else
-                cmdAux.pos.x = atoi(args);
+                cmdAux.pos.x = atoi(args) + 2;
 
             l = 0;
             for(i = 0; i < 16; i++)
@@ -257,16 +266,16 @@ _Proceso *cargarComandosArchivo(int *fHandler, _Proceso *cmdList, int *cantidadP
 
             if(atoi(args) > SS_MAX_Y)
                 cmdAux.pos.y = SS_MAX_Y;
-            else if(atoi(args) < 0)
+            else if(atoi(args) <= 0)
                 cmdAux.pos.y = 1;
             else
-                cmdAux.pos.y = atoi(args);
+                cmdAux.pos.y = atoi(args) + 1;
 
 
         }else
         {
-            cmdAux.pos.x = -1;
-            cmdAux.pos.y = -1;
+            cmdAux.pos.x = 0;
+            cmdAux.pos.y = 0;
 
             l = 0;
             for(i = 0; i < 16; i++)

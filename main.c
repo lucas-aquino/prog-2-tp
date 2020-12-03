@@ -4,6 +4,7 @@
 #include <conio.h>
 #include <ctype.h>
 #include <time.h>
+#include <math.h>
 
 #include <io.h>
 #include <fcntl.h>
@@ -21,8 +22,6 @@ int main()
     short key;
     int frame = 0;
 
-    char userNumbers[2];
-
     float sumaPromRender = 0;
     float promedioRender = 0;
 
@@ -30,12 +29,10 @@ int main()
     int punteroProc  = 0;
     int contadorProc = 0;
 
-    int fHandler;
-    int fSize;
-    char fPath[80];
-    char *buffer;
+    int isPasos = 0;
 
-    char *token;
+    int fHandler;
+    char fPath[80];
 
     _Objeto player;
 
@@ -46,8 +43,8 @@ int main()
     _Proceso nuevoProc;
     int varUsuario;
 
-    player.pos.x = 20;
-    player.pos.y = 10;
+    player.pos.x = 2;
+    player.pos.y = SS_MAX_Y;
 
     player.dir = ARRIBA;
 
@@ -100,17 +97,30 @@ int main()
 
                 if(varUsuario > SS_MAX_Y)
                     varUsuario = SS_MAX_Y;
-                else if(varUsuario < 0)
+                else if(varUsuario <= 0)
                     varUsuario = 1;
 
                 nuevoProc.pos.y = varUsuario;
 
                 cmdList = cmdListAgregar(cmdList, nuevoProc, &cantidadProc, CMD_APPEND);
 
-                nuevoProc.pos.x = -1;
-                nuevoProc.pos.y = -1;
+                nuevoProc.pos.x = 0;
+                nuevoProc.pos.y = 0;
 
             }
+
+            if(key == KB_DETENER)
+            {
+
+                cantidadProc = 0;
+                punteroProc  = 0;
+                contadorProc = 0;
+
+                free(cmdList);
+
+                cmdList = (_Proceso *)malloc(sizeof(_Proceso) * cantidadProc);
+            }
+
 
             if(key == KB_PAUSA)
             {
@@ -119,10 +129,7 @@ int main()
                 else if(cmdList[punteroProc].estado != ERROR && cmdList[punteroProc].estado != HECHO)
                     cmdList[punteroProc].estado = HACIENDO;
                 else if(punteroProc < cantidadProc - 1)
-                {
-                    punteroProc++;
-                    cmdList[punteroProc].estado = HACIENDO;
-                }
+                    cmdList[++punteroProc].estado = HACIENDO;
             }
 
             if(key == KB_ARRIBA)
@@ -208,7 +215,35 @@ int main()
                 {
                     cmdList = cargarComandosArchivo(&fHandler, cmdList, &cantidadProc, CMD_OVERRIDE);
                 }else
+                {
                     printf("Archivo No Encontrado!!");
+                    while((clock() - start) <= 5000);
+                }
+            }
+
+            if(key == KB_ARCH_PXP)
+            {
+                if(!isPasos)
+                {
+                    printf("INGRESE EL NOMBRE DEL ARCHIVO: ");
+
+                    scanf("%s", fPath);
+
+                    if(getFHandler(&fHandler, fPath))
+                    {
+                        cmdList = cargarComandosArchivo(&fHandler, cmdList, &cantidadProc, CMD_OVERRIDE);
+                        isPasos = 1;
+                    }else
+                    {
+                        printf("Archivo No Encontrado!!");
+                        while((clock() - start) <= 5000);
+                    }
+                }else if(cmdList[punteroProc].estado == HECHO)
+                {
+                    cmdList[++punteroProc].estado = HACIENDO;
+                }else
+                    cmdList[punteroProc].estado = HACIENDO;
+
             }
 
         }
@@ -216,6 +251,7 @@ int main()
 
         fillDisplay(display);
 
+        //Define el proceso que indica el inicio del player
         if(cmdList[punteroProc].cmd == INICIO && cmdList[punteroProc].estado == HACIENDO)
         {
             player.dir = ARRIBA;
@@ -224,69 +260,119 @@ int main()
             player.pos.y = cmdList[punteroProc].pos.y;
 
             cmdList[punteroProc].estado = HECHO;
-            if(punteroProc < cantidadProc - 1)
-            {
-                punteroProc++;
-                cmdList[punteroProc].estado = HACIENDO;
-            }
+            if(punteroProc < cantidadProc - 1 && !isPasos)
+                cmdList[++punteroProc].estado = HACIENDO;
         }
+
 
         //Movimiento del Jugador
         if(cantidadProc != 0)
-            desplazarPlayer(&player, cmdList, &punteroProc, &contadorProc, &cantidadProc);
+            desplazarPlayer(&player, cmdList, &punteroProc, &contadorProc, &cantidadProc, isPasos);
 
+
+        if(punteroProc >= cantidadProc - 1 && isPasos)
+            isPasos = 0;
 
         //CLI
         displayMenu();
+
+
+
+        //Ubica el jugador en el display
         ubicarPlayer(&player, display);
+
+
+
+        //Muestra el display
         puts((char *)display);
 
 
-        printf("\nPLAYER POS: x%2d y%2d DIR:%2d\n", player.pos.x - 2, player.pos.y - 1, player.dir);
 
-        printf("\nCMD SIZE: %d", sizeof(_Proceso));
 
-        printf("\nCMDLIST SIZE: %d", sizeof(_Proceso) * cantidadProc);
 
-        printf("\nMEMPOS CMDLIST: %p", cmdList);
+        //Muestra la posicion del jugador
+        //printf("\nPLAYER POS: x%2d y%2d DIR:%2d\n", player.pos.x - 2, player.pos.y - 1, player.dir);
 
-        printf("\nPTR CMD: %d\n", punteroProc);
 
-        printf("\nCANTIDAD COMANDO: %d", cantidadProc);
+        //Muestra el tamanno en bytes del comando
+        //printf("\nCMD SIZE: %d", sizeof(_Proceso));
 
-        puts("\nLISTA DE COMANDOS POR HACER:");
+        //Muestra el tamanno en byte de la lista de comandos
+        //printf("\nCMDLIST SIZE: %d", sizeof(_Proceso) * cantidadProc);
 
-        puts("\tCMD\t\tESTADO\t\tVALUE");
+        //Muestra la posicion en memoria de la lista de comandos
+        //printf("\nMEM-POS CMDLIST: %p", cmdList);
+
+        //Muestra a que posicion de la lista de comandos esta apuntando
+        //printf("\nPTR A CMD: %d", punteroProc);
+
+        //Muestra la cantidad de comandos de la lista
+        //printf("\nCANTIDAD DE CMD: %d", cantidadProc);
+
+        //Muestra la cantidad de comandos que quedan por ejecutar
+        //printf("\nCMD QUE FALTAN: %d", cantidadProc - punteroProc - 1);
+
+        if(cmdList[punteroProc].estado == PAUSADO && round((float)(frame % 10) / 10))
+            puts("\n\t\t\tPAUSA!!");
+        else
+            puts("\n");
+
+        //Modulo de frame (para hacer titilar el cartel de pausa)
+        //printf("\nMODULO DE FRAME: %.2f", round((float)(frame % 10) / 10));
+
+        //Muestra la lista de comandos
+
+        puts("\n---------------------------------------");
+        puts("    COMANDO  |  VALOR");
+        puts("---------------------------------------");
 
         for(int i = 0; i < cantidadProc; i++)
         {
-            if(/*cmdList[i].estado == PORHACER ||*/ cmdList[i].estado == HACIENDO)
+            if(cmdList[i].estado == PORHACER || cmdList[i].estado == HACIENDO)
             {
                 if(cmdList[i].cmd == INICIO)
-                    printf("\t%-10s\t%-7d\t\t(%2d,%2d)\n", cmdList[i].nombre, cmdList[i].estado, cmdList[i].pos.x - 2, cmdList[i].pos.y - 1);
+                    printf(" %10s  |  (%2d,%2d)\n", cmdList[i].nombre, cmdList[i].pos.x - 2, cmdList[i].pos.y - 1);
                 else
-                    printf("\t%-10s\t%-7d\t\t%-5d\n", cmdList[i].nombre, cmdList[i].estado, cmdList[i].value);
+                    printf(" %10s  |  %-5d\n", cmdList[i].nombre, cmdList[i].value);
             }
         }
+        puts("\n");
 
-        printf("\nPANTALLA: %d", sizeof(display));
-        printf("\nFRAME: %3d\n", frame);
+
+
+        //Esto es para ver el tamanno del display
+        //printf("\nPANTALLA: %d", sizeof(display));
+
+        //Esto es para ver el numero del frame actual
+        //printf("\nFRAME: %3d\n", frame);
+
+
+        //Lleva la cuanta de los frames del programa
 
         frame++;
 
+
+
+        //Aca se calcula el tiempo que se tardo en mostrar el frame
         end = clock() - end;
-        printf("RENDER: %3d ms\n", end);
 
         sumaPromRender += end;
         promedioRender = sumaPromRender / (float)frame;
-        printf("PROMEDIO: %3.1f ms\n", promedioRender);
 
+
+
+        //Aca se muestra el tiempo en que se tardo en mostrar el frame
+        //printf("RENDER: %3d ms\n", end);
+        //printf("PROMEDIO: %3.1f ms\n", promedioRender);
+
+
+
+        //Tiempo de espera para el proximo frame
         while((clock() - start) <= T_REFRESH);
+
     }
 
     system("cls");
-    printf("\n\n\tEL PROGRAMA SE CERRARA ENSEGIDA :(\n\n");
-    while((clock() - start) <= 5000);
 
     free(cmdList);
     close(fHandler);
